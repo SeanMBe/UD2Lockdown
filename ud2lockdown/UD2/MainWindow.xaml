@@ -1,0 +1,12 @@
+﻿<Window x:Class="UD2.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="UD2" Height="350" Width="525">
+    <StackPanel >
+        <Button AutomationProperties.AutomationId="get_customer_button">Get Customer</Button>
+        <TextBlock>Customer Id:</TextBlock>
+        <TextBox AutomationProperties.AutomationId="customer_id_textbox"></TextBox>
+        <TextBlock>Customer Get Result:</TextBlock>
+        <TextBox AutomationProperties.AutomationId="customer_result_textbox"></TextBox>
+    </StackPanel>
+</Window>
