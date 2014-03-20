@@ -1,0 +1,4 @@
++what is path for ud2
++what http api is ud2 communicating with
++what webservice api is cms using?
++what http api is cms using?

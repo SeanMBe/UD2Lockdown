@@ -23,6 +23,7 @@ namespace UD2
         public MainWindow()
         {
             InitializeComponent();
+            this.DataContext = new MainWindowViewModel();
         }
     }
 }

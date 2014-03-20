@@ -3,10 +3,10 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="UD2" Height="350" Width="525">
     <StackPanel >
-        <Button AutomationProperties.AutomationId="get_customer_button">Get Customer</Button>
+        <Button Command="{Binding GetCustomerCommand}" AutomationProperties.AutomationId="get_customer_button">Get Customer</Button>
         <TextBlock>Customer Id:</TextBlock>
-        <TextBox AutomationProperties.AutomationId="customer_id_textbox"></TextBox>
+        <TextBox Text="{Binding CustomerId}" AutomationProperties.AutomationId="customer_id_textbox"></TextBox>
         <TextBlock>Customer Get Result:</TextBlock>
-        <TextBox AutomationProperties.AutomationId="customer_result_textbox"></TextBox>
+        <TextBox Text="{Binding CustomerGetResult}" AutomationProperties.AutomationId="customer_result_textbox"></TextBox>
     </StackPanel>
 </Window>
