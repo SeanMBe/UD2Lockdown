@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.ServiceModel;
 using System.ServiceModel.Description;
 
@@ -10,19 +9,26 @@ namespace UD2.Services
     {
         public string Customer(string id)
         {
-            Debugger.Launch();
-            var customers = new Dictionary<string, Tuple<string,string>> { { "2", new Tuple<string, string>("John", "7") } };
+            var customers = new Dictionary<string, Tuple<string, string>> { { "2", new Tuple<string, string>("John", "7") } };
             var address = "";
-            using (var cf = new ChannelFactory<ILMS>(new WebHttpBinding(), "http://localhost:8342"))
+            var addressId = customers[id].Item2;
+            address = Lms.GetAddress(addressId);
+
+            return String.Format("CustomerId={0},CustomerName={1},{2}", id, customers[id].Item1, address);
+        }
+
+        public static string Uri {  get { return "http://localhost:8341"; } }
+
+        public static string GetCustomer(string customerId)
+        {
+            string customerResult;
+            using (var cf = new ChannelFactory<ICMS>(new WebHttpBinding(), Uri))
             {
                 cf.Endpoint.Behaviors.Add(new WebHttpBehavior());
                 var channel = cf.CreateChannel();
-                var addressId = customers[id].Item2;
- 
-                address = channel.Address(addressId);
+                customerResult = channel.Customer(customerId);
             }
-
-            return string.Format("CustomerId={0},CustomerName={1},{2}", id, customers[id].Item1, address);
+            return customerResult;
         }
     }
 }

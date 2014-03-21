@@ -19,15 +19,13 @@ namespace UD2
         {
             GetCustomerCommand = new BasicCommand(() =>
             {
-                    using (var cf = new ChannelFactory<ICMS>(new WebHttpBinding(), "http://localhost:8341"))
-                    {
-                        cf.Endpoint.Behaviors.Add(new WebHttpBehavior());
-                        var channel = cf.CreateChannel();
-                        CustomerGetResult = channel.Customer(CustomerId);
-                    }
-                });
+                var customerId = CustomerId;
+                var customerResult = "";
+                customerResult = Services.Cms.GetCustomer(customerId);
+                CustomerGetResult = customerResult;
+            });
         }
-        
+
         public ICommand GetCustomerCommand { get; private set; }
         
         public string CustomerId { get; set; }

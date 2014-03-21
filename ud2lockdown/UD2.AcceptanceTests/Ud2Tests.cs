@@ -13,10 +13,7 @@ namespace UD2.AcceptanceTests
     [TestFixture]
     public class Ud2Tests
     {
-        private Ud2Screen _app;
-
         private WebServiceHost _oms;
-
         private WebServiceHost _lms;
 
         [SetUp]
@@ -25,12 +22,13 @@ namespace UD2.AcceptanceTests
             KillUD();
             _oms = this.StartCmsWebService();
             _lms = this.StartLmsWebService();
-            _oms.Open();
-            _lms.Open();
             CoreAppXmlConfiguration.Instance.BusyTimeout = 5000;
             CoreAppXmlConfiguration.Instance.UIAutomationZeroWindowBugTimeout = 5000;
+        }
 
-            _app = new Ud2Screen();
+        private static Ud2Screen OpenUd2()
+        {
+            return new Ud2Screen();
         }
 
         [TearDown]
@@ -44,23 +42,40 @@ namespace UD2.AcceptanceTests
         [Test]
         public void When_I_open_app()
         {
-            Assert.That(_app.CustomerSearch.Enabled, Is.True);
-            Assert.That(_app.CustomerId.Enabled, Is.True);
-            Assert.That(_app.CustomerResult.Enabled, Is.True);
-            Assert.That(_app.CustomerId.Text, Is.Empty);
-            Assert.That(_app.CustomerResult.Text, Is.Empty);
+            var app = OpenUd2();
+
+            Assert.That(app.CustomerSearch.Enabled, Is.True);
+            Assert.That(app.CustomerId.Enabled, Is.True);
+            Assert.That(app.CustomerResult.Enabled, Is.True);
+            Assert.That(app.CustomerId.Text, Is.Empty);
+            Assert.That(app.CustomerResult.Text, Is.Empty);
         }
         
         [Test]
         public void When_I_get_customer_with_id_2()
         {
-            _app.CustomerId.SetValue("2");
-            _app.CustomerSearch.Click();
+            var app = OpenUd2();
+            app.CustomerId.SetValue("2");
+            app.CustomerSearch.Click();
 
-            Retry.For(() => _app.CustomerResult.Text, result => result == "", TimeSpan.FromSeconds(3));
+            Retry.For(() => app.CustomerResult.Text, result => result == "", TimeSpan.FromSeconds(3));
 
-            Assert.That(_app.CustomerResult.Text, Is.StringStarting("CustomerId=2,CustomerName=John"));
-            Assert.That(_app.CustomerResult.Text, Is.StringEnding("AddressId=7,StreetNumber=1234"));
+            Assert.That(app.CustomerResult.Text, Is.StringStarting("CustomerId=2,CustomerName=John"));
+            Assert.That(app.CustomerResult.Text, Is.StringEnding("AddressId=7,StreetNumber=1234"));
+        }
+
+        [Test]
+        public void When_I_call_lms()
+        {
+            var actual = Lms.GetAddress("7");
+            Assert.That(actual, Is.EqualTo("AddressId=7,StreetNumber=1234"));
+        }
+        
+        [Test]
+        public void When_I_call_cms()
+        {
+            var actual = Cms.GetCustomer("2");
+            Assert.That(actual, Is.EqualTo("CustomerId=2,CustomerName=John,AddressId=7,StreetNumber=1234"));
         }
 
         private static void KillUD()
@@ -74,15 +89,17 @@ namespace UD2.AcceptanceTests
 
         private WebServiceHost StartCmsWebService()
         {
-            var host = new WebServiceHost(typeof(Cms), new Uri("http://localhost:8341"));
+            var host = new WebServiceHost(typeof(Cms), new Uri(Cms.Uri));
             var ep = host.AddServiceEndpoint(typeof(ICMS), new WebHttpBinding(), "");
+            host.Open();
             return host;
         }
         
         private WebServiceHost StartLmsWebService()
         {
-            var host = new WebServiceHost(typeof(Lms), new Uri("http://localhost:8342"));
+            var host = new WebServiceHost(typeof(Lms), new Uri(Lms.Uri));
             var ep = host.AddServiceEndpoint(typeof(ILMS), new WebHttpBinding(), "");
+            host.Open();
             return host;
         }
     }
