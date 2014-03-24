@@ -2,26 +2,26 @@
 using System.Diagnostics;
 using System.Linq;
 using System.ServiceModel;
-using System.ServiceModel.Web;
+using CMS.Client;
+using LMS.Client;
 using NUnit.Framework;
 using TestStack.White.Configuration;
 using TestStack.White.Utility;
-using UD2.Services;
 
 namespace UD2.AcceptanceTests
 {
     [TestFixture]
     public class Ud2Tests
     {
-        private WebServiceHost _oms;
-        private WebServiceHost _lms;
+        private Action _closeCmsService;
+        private Action _closeLmsService;
 
         [SetUp]
         public void SetUp()
         {
             KillUD();
-            _oms = this.StartCmsWebService();
-            _lms = this.StartLmsWebService();
+            this._closeCmsService = this.StartCmsWebService();
+            this._closeLmsService = this.StartLmsWebService();
             CoreAppXmlConfiguration.Instance.BusyTimeout = 5000;
             CoreAppXmlConfiguration.Instance.UIAutomationZeroWindowBugTimeout = 5000;
         }
@@ -34,8 +34,8 @@ namespace UD2.AcceptanceTests
         [TearDown]
         public void TearDown()
         {
-            _oms.Close();
-            _lms.Close();
+            _closeCmsService();
+            _closeLmsService();
             KillUD();
         }
 
@@ -67,14 +67,14 @@ namespace UD2.AcceptanceTests
         [Test]
         public void When_I_call_lms()
         {
-            var actual = Lms.GetAddress("7");
+            var actual = LmsClient.GetAddress("7");
             Assert.That(actual, Is.EqualTo("AddressId=7,StreetNumber=1234"));
         }
         
         [Test]
         public void When_I_call_cms()
         {
-            var actual = Cms.GetCustomer("2");
+            var actual = CmsClient.GetCustomer("2");
             Assert.That(actual, Is.EqualTo("CustomerId=2,CustomerName=John,AddressId=7,StreetNumber=1234"));
         }
 
@@ -83,24 +83,39 @@ namespace UD2.AcceptanceTests
             var processes = Process.GetProcesses().Where(p => p.ProcessName == "UD2");
             foreach (var process in processes)
             {
-                process.Kill();
+                try
+                {
+                    process.Kill();
+                }
+                catch
+                {
+                }
             }
         }
 
-        private WebServiceHost StartCmsWebService()
+        private Action StartCmsWebService()
         {
-            var host = new WebServiceHost(typeof(Cms), new Uri(Cms.Uri));
-            var ep = host.AddServiceEndpoint(typeof(ICMS), new WebHttpBinding(), "");
-            host.Open();
-            return host;
+            var servicePath = @"C:\Projects\UD2Lockdown\ud2lockdown\CMS\bin\Debug";
+            var port = "8341";
+            var closeIIS = StartIIS(servicePath, port);
+            return closeIIS;
         }
         
-        private WebServiceHost StartLmsWebService()
+        private Action StartLmsWebService()
         {
-            var host = new WebServiceHost(typeof(Lms), new Uri(Lms.Uri));
-            var ep = host.AddServiceEndpoint(typeof(ILMS), new WebHttpBinding(), "");
-            host.Open();
-            return host;
+            var servicePath = @"C:\Projects\UD2Lockdown\ud2lockdown\LMS\bin\Debug";
+            var port = "7979";
+            var closeIIS = StartIIS(servicePath, port);
+            return closeIIS;
+        }
+
+        private static Action StartIIS(string servicePath, string port)
+        {
+            var args = string.Format(@"/path:""{0}"" /port:{1}", servicePath, port);
+            var iisPath = @"C:\Projects\UD2Lockdown\tools\IIS Express\iisexpress.exe";
+            var iis = Process.Start(iisPath, args);
+
+            return iis.Kill;
         }
     }
 }

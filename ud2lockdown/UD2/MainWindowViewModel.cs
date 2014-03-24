@@ -1,11 +1,8 @@
 ﻿using System.ComponentModel;
-using System.Diagnostics;
 using System.Runtime.CompilerServices;
-using System.ServiceModel;
-using System.ServiceModel.Description;
 using System.Windows.Input;
+using CMS.Client;
 using UD2.Annotations;
-using UD2.Services;
 
 namespace UD2
 {
@@ -21,7 +18,7 @@ namespace UD2
             {
                 var customerId = CustomerId;
                 var customerResult = "";
-                customerResult = Services.Cms.GetCustomer(customerId);
+                customerResult = CmsClient.GetCustomer(customerId);
                 CustomerGetResult = customerResult;
             });
         }

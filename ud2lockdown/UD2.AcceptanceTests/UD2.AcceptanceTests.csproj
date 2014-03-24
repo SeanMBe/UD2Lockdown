@@ -38,6 +38,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.ServiceModel.Web" />
     <Reference Include="System.Xml.Linq" />
@@ -50,6 +51,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Service.cs" />
     <Compile Include="Ud2Screen.cs" />
     <Compile Include="Ud2Tests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -58,6 +60,14 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\CMS\CMS.csproj">
+      <Project>{186DFF01-B02D-4A6C-B134-D2072B8C90E2}</Project>
+      <Name>CMS</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\LMS\LMS.csproj">
+      <Project>{B9C2F762-B006-42C4-91CA-4F768B7F80CF}</Project>
+      <Name>LMS</Name>
+    </ProjectReference>
     <ProjectReference Include="..\UD2\UD2.csproj">
       <Project>{71523C8B-7F30-4454-BAFF-AA2F9B044854}</Project>
       <Name>UD2</Name>
