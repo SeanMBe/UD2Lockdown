@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
+using System.Net.Mime;
 using System.ServiceModel;
 using CMS.Client;
 using LMS.Client;
@@ -95,7 +97,8 @@ namespace UD2.AcceptanceTests
 
         private Action StartCmsWebService()
         {
-            var servicePath = @"C:\Projects\UD2Lockdown\ud2lockdown\CMS\bin\Debug";
+            var currentDirectory = Environment.CurrentDirectory;
+            var servicePath = Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, @"..\..\..\CMS\bin\Debug"));  
             var port = "8341";
             var closeIIS = StartIIS(servicePath, port);
             return closeIIS;
@@ -103,7 +106,7 @@ namespace UD2.AcceptanceTests
         
         private Action StartLmsWebService()
         {
-            var servicePath = @"C:\Projects\UD2Lockdown\ud2lockdown\LMS\bin\Debug";
+            var servicePath = Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, @"..\..\..\LMS\bin\Debug"));  
             var port = "7979";
             var closeIIS = StartIIS(servicePath, port);
             return closeIIS;
@@ -112,7 +115,7 @@ namespace UD2.AcceptanceTests
         private static Action StartIIS(string servicePath, string port)
         {
             var args = string.Format(@"/path:""{0}"" /port:{1}", servicePath, port);
-            var iisPath = @"C:\Projects\UD2Lockdown\tools\IIS Express\iisexpress.exe";
+            var iisPath = Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, @"..\..\..\..\tools\IIS Express\iisexpress.exe"));  
             var iis = Process.Start(iisPath, args);
 
             return iis.Kill;
