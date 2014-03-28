@@ -3,6 +3,7 @@
 namespace LMS
 {
     [ServiceContract]
+    
     public interface ILMS
     {
         [OperationContract]

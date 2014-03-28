@@ -18,6 +18,6 @@ namespace CMS
             return String.Format("CustomerId={0},CustomerName={1},{2}", id, customers[id].Item1, address);
         }
 
-        public static string Uri { get { return "http://cms/service.svc/cms"; } }
+        public static string Uri { get { return "https://cms/service.svc/cms"; } }
     }
 }
