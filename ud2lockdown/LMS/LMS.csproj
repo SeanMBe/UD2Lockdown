@@ -55,6 +55,7 @@
   <ItemGroup>
     <None Include="Web.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
     </None>
   </ItemGroup>
   <ItemGroup />

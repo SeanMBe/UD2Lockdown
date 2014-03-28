@@ -13,7 +13,7 @@ namespace CMS
             var address = "";
             var addressId = customers[id].Item2;
 
-            var client = new LMSClient(new WSHttpBinding(), new EndpointAddress(Lms.Uri));
+            var client = new LMSClient(new WSHttpBinding(SecurityMode.None), new EndpointAddress(Lms.Uri));
 
             address = client.Address(addressId);
 
@@ -21,6 +21,6 @@ namespace CMS
             return String.Format("CustomerId={0},CustomerName={1},{2}", id, customers[id].Item1, address);
         }
 
-        public static string Uri { get { return "http://localhost:8341/service.svc/cms"; } }
+        public static string Uri { get { return "http://cms/service.svc/cms"; } }
     }
 }

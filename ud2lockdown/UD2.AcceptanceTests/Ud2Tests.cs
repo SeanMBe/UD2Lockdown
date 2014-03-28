@@ -22,6 +22,7 @@ namespace UD2.AcceptanceTests
         public void SetUp()
         {
             KillUD();
+            KillIISEXPRESS();
             this._closeCmsService = this.StartCmsWebService();
             this._closeLmsService = this.StartLmsWebService();
             CoreAppXmlConfiguration.Instance.BusyTimeout = 5000;
@@ -82,7 +83,17 @@ namespace UD2.AcceptanceTests
 
         private static void KillUD()
         {
-            var processes = Process.GetProcesses().Where(p => p.ProcessName == "UD2");
+            KillProcess("UD2");
+        }
+
+        private void KillIISEXPRESS()
+        {
+            KillProcess("iisexpress");
+        }
+        
+        private static void KillProcess(string ud2)
+        {
+            var processes = Process.GetProcesses().Where(p => p.ProcessName == ud2);
             foreach (var process in processes)
             {
                 try
@@ -97,10 +108,9 @@ namespace UD2.AcceptanceTests
 
         private Action StartCmsWebService()
         {
-            var currentDirectory = Environment.CurrentDirectory;
             var servicePath = Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, @"..\..\..\CMS\bin\Debug"));  
             var port = "8341";
-            var closeIIS = StartIIS(servicePath, port);
+            var closeIIS = StartIIS("CMS", servicePath, port);
             return closeIIS;
         }
         
@@ -108,13 +118,13 @@ namespace UD2.AcceptanceTests
         {
             var servicePath = Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, @"..\..\..\LMS\bin\Debug"));  
             var port = "7979";
-            var closeIIS = StartIIS(servicePath, port);
+            var closeIIS = StartIIS("LMS", servicePath, port);
             return closeIIS;
         }
 
-        private static Action StartIIS(string servicePath, string port)
+        private static Action StartIIS(string sitename, string servicePath, string port)
         {
-            var args = string.Format(@"/path:""{0}"" /port:{1}", servicePath, port);
+            var args = string.Format(@"/config:C:\Users\sbennett1\Documents\iisexpress\config\applicationhost.config /site:{0}", sitename);
             var iisPath = Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, @"..\..\..\..\tools\IIS Express\iisexpress.exe"));  
             var iis = Process.Start(iisPath, args);
 

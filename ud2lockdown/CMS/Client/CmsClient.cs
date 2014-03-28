@@ -6,7 +6,7 @@ namespace CMS.Client
     {
         public static string GetCustomer(string customerId)
         {
-            var client = new CMSClient(new WSHttpBinding(), new EndpointAddress(Cms.Uri));
+            var client = new CMSClient(new WSHttpBinding(SecurityMode.None), new EndpointAddress(Cms.Uri));
 
             var response = client.Customer(customerId);
 
