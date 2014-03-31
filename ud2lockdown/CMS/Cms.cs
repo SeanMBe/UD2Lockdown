@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.ServiceModel;
 using LMS;
 using LMS.Client;
@@ -10,7 +11,9 @@ namespace CMS
     {
         public string Customer(string id)
         {
-            var customers = new Dictionary<string, Tuple<string, string>> { { "2", new Tuple<string, string>("John", "7") } };
+            Debugger.Launch();
+            //OperationContext.Current.ServiceSecurityContext.AuthorizationContext.Properties
+        var customers = new Dictionary<string, Tuple<string, string>> { { "2", new Tuple<string, string>("John", "7") } };
             var addressId = customers[id].Item2;
 
             var address = LmsClient.GetAddress(addressId);
