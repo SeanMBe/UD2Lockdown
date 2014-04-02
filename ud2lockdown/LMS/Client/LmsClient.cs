@@ -1,4 +1,5 @@
-﻿using System.ServiceModel;
+﻿using System.Security.Cryptography.X509Certificates;
+using System.ServiceModel;
 
 namespace LMS.Client
 {
@@ -7,6 +8,8 @@ namespace LMS.Client
         public static string GetAddress(string addressId)
         {
             var client = new LMSClient(new WSHttpBinding(SecurityMode.Transport) , new EndpointAddress(Lms.Uri));
+
+            client.ClientCredentials.ClientCertificate.Certificate = new X509Certificate2(@"c:\users\sbennett1\desktop\cms.pfx", "password");
 
             var response = client.Address(addressId);
             

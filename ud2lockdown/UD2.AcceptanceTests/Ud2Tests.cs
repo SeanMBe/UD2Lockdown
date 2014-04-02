@@ -124,7 +124,7 @@ namespace UD2.AcceptanceTests
 
         private static Action StartIIS(string sitename, string servicePath, string port)
         {
-            var args = string.Format(@"/config:C:\Users\sbennett1\Documents\iisexpress\config\applicationhost.config /site:{0}", sitename);
+            var args = string.Format(@"/config:C:\Users\sbennett1\Documents\iisexpress\config\applicationhost.config /site:{0} /trace:i", sitename);
             var iisPath = Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, @"..\..\..\..\tools\IIS Express\iisexpress.exe"));  
             var iis = Process.Start(iisPath, args);
 
