@@ -50,12 +50,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\LMS\LMS.csproj">
-      <Project>{B9C2F762-B006-42C4-91CA-4F768B7F80CF}</Project>
-      <Name>LMS</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <Content Include="service.svc">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
