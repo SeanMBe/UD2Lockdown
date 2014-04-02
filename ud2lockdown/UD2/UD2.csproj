@@ -111,10 +111,6 @@
       <Project>{186dff01-b02d-4a6c-b134-d2072b8c90e2}</Project>
       <Name>CMS</Name>
     </ProjectReference>
-    <ProjectReference Include="..\LMS\LMS.csproj">
-      <Project>{b9c2f762-b006-42c4-91ca-4f768b7f80cf}</Project>
-      <Name>LMS</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

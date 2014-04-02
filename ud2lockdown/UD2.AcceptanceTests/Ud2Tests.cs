@@ -2,10 +2,8 @@
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Net.Mime;
-using System.ServiceModel;
+using System.Security.Cryptography.X509Certificates;
 using CMS.Client;
-using LMS.Client;
 using NUnit.Framework;
 using TestStack.White.Configuration;
 using TestStack.White.Utility;
@@ -55,7 +53,7 @@ namespace UD2.AcceptanceTests
         }
         
         [Test]
-        public void When_I_get_customer_with_id_2()
+        public void When_secured_ud_gets_customer()
         {
             var app = OpenUd2();
             app.CustomerId.SetValue("2");
@@ -68,17 +66,27 @@ namespace UD2.AcceptanceTests
         }
 
         [Test]
-        public void When_I_call_lms()
+        public void When_I_call_cms_with_certificate()
         {
-            var actual = LmsClient.GetAddress("7");
-            Assert.That(actual, Is.EqualTo("AddressId=7,StreetNumber=1234"));
+            var actual = CmsClient.GetCustomer("2", new X509Certificate2(@"C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\Bin\cmsDevClient.cer", ""));
+            Assert.That(actual, Is.EqualTo("CustomerId=2,CustomerName=John,AddressId=7,StreetNumber=1234"));
         }
         
         [Test]
-        public void When_I_call_cms()
+        public void When_I_call_cms_without_certificate()
         {
-            var actual = CmsClient.GetCustomer("2");
-            Assert.That(actual, Is.EqualTo("CustomerId=2,CustomerName=John,AddressId=7,StreetNumber=1234"));
+            Exception actual = null;
+            try
+            {
+                CmsClient.GetCustomer("2");
+            }
+            catch (Exception ex)
+            {
+                actual = ex;
+            }         
+
+            Assert.That(actual, Is.TypeOf<InvalidOperationException>());
+            Assert.That(actual.Message, Is.StringContaining("The client certificate is not provided."));
         }
 
         private static void KillUD()
@@ -124,7 +132,7 @@ namespace UD2.AcceptanceTests
 
         private static Action StartIIS(string sitename, string servicePath, string port)
         {
-            var args = string.Format(@"/config:C:\Users\sbennett1\Documents\iisexpress\config\applicationhost.config /site:{0}", sitename);
+            var args = string.Format(@"/config:C:\Users\sbennett1\Documents\iisexpress\config\applicationhost.config /site:{0} /trace:i", sitename);
             var iisPath = Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, @"..\..\..\..\tools\IIS Express\iisexpress.exe"));  
             var iis = Process.Start(iisPath, args);
 

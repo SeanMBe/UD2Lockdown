@@ -42,7 +42,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="MyX509CertificateValidator.cs" />
+    <Compile Include="CustomValidator.cs" />
     <Compile Include="Client\Cms.cs" />
     <Compile Include="Client\CmsClient.cs" />
     <Compile Include="Cms.cs" />
@@ -50,20 +50,18 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\LMS\LMS.csproj">
-      <Project>{B9C2F762-B006-42C4-91CA-4F768B7F80CF}</Project>
-      <Name>LMS</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <Content Include="service.svc">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <None Include="svcutil.exe.config" />
     <None Include="Web.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
