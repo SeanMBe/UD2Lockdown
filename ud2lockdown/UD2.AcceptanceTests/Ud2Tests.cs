@@ -131,7 +131,8 @@ namespace UD2.AcceptanceTests
 
         private void SetupVirtualDirectoryPath(string app, string apphost)
         {
-            var website = Path.Combine(Directory.GetCurrentDirectory(), @"C:\Projects\UD2Lockdown\ud2lockdown\CMS\bin\debug");
+            var websiteRel = Path.Combine(Directory.GetCurrentDirectory(), @"..\..\..\CMS\bin\debug");
+            var website = Path.GetFullPath(websiteRel);
             var args = string.Format(@"set vdir ""{0}/"" -physicalPath:""{1}"" /apphostconfig:{2}", app, website, apphost);
             var appcmd = Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, @"..\..\..\..\tools\IIS Express\appcmd.exe"));  
             var process = Process.Start(appcmd, args);
