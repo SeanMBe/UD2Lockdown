@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
+using System.ServiceModel.Security.Tokens;
 using CMS.Client;
 using NUnit.Framework;
 using TestStack.White.Configuration;
@@ -14,7 +15,6 @@ namespace UD2.AcceptanceTests
     public class Ud2Tests
     {
         private Action _closeCmsService;
-        private Action _closeLmsService;
 
         [SetUp]
         public void SetUp()
@@ -22,9 +22,17 @@ namespace UD2.AcceptanceTests
             KillUD();
             KillIISEXPRESS();
             this._closeCmsService = this.StartCmsWebService();
-            this._closeLmsService = this.StartLmsWebService();
             CoreAppXmlConfiguration.Instance.BusyTimeout = 5000;
             CoreAppXmlConfiguration.Instance.UIAutomationZeroWindowBugTimeout = 5000;
+        }
+
+
+        private void Execute(string process, string args)
+        {
+            var iis = Process.Start(process, args);
+            
+            iis.WaitForExit();
+            Debug.WriteLineIf(iis.ExitCode != 0, string.Format("Exit Code for {0} {1} is = {2}", process, args, iis.ExitCode));
         }
 
         private static Ud2Screen OpenUd2()
@@ -36,7 +44,6 @@ namespace UD2.AcceptanceTests
         public void TearDown()
         {
             _closeCmsService();
-            _closeLmsService();
             KillUD();
         }
 
@@ -68,7 +75,7 @@ namespace UD2.AcceptanceTests
         [Test]
         public void When_I_call_cms_with_certificate()
         {
-            var actual = CmsClient.GetCustomer("2", new X509Certificate2(@"C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\Bin\cmsDevClient.cer", ""));
+            var actual = CmsClient.GetCustomer("2", Certificates.Cms);
             Assert.That(actual, Is.EqualTo("CustomerId=2,CustomerName=John,AddressId=7,StreetNumber=1234"));
         }
         
@@ -122,14 +129,6 @@ namespace UD2.AcceptanceTests
             return closeIIS;
         }
         
-        private Action StartLmsWebService()
-        {
-            var servicePath = Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, @"..\..\..\LMS\bin\Debug"));  
-            var port = "7979";
-            var closeIIS = StartIIS("LMS", servicePath, port);
-            return closeIIS;
-        }
-
         private static Action StartIIS(string sitename, string servicePath, string port)
         {
             var args = string.Format(@"/config:C:\Users\sbennett1\Documents\iisexpress\config\applicationhost.config /site:{0} /trace:i", sitename);

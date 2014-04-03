@@ -19,7 +19,7 @@ namespace UD2
             {
                 var customerId = CustomerId;
                 var customerResult = "";
-                customerResult = CmsClient.GetCustomer(customerId, new X509Certificate2(@"C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\Bin\cmsDevClient.cer", ""));
+                customerResult = CmsClient.GetCustomer(customerId, Certificates.Cms);
                 CustomerGetResult = customerResult;
             });
         }
