@@ -123,15 +123,14 @@ namespace UD2.AcceptanceTests
 
         private Action StartCmsWebService()
         {
-            var servicePath = Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, @"..\..\..\CMS\bin\Debug"));  
-            var port = "8341";
-            var closeIIS = StartIIS("CMS", servicePath, port);
+            var closeIIS = StartIIS("CMS");
             return closeIIS;
         }
         
-        private static Action StartIIS(string sitename, string servicePath, string port)
+        private static Action StartIIS(string sitename)
         {
-            var args = string.Format(@"/config:C:\Users\sbennett1\Documents\iisexpress\config\applicationhost.config /site:{0} /trace:i", sitename);
+            var config = Path.Combine(Directory.GetCurrentDirectory(), "applicationhost.config");
+            var args = string.Format(@"/config:{0} /site:{1} /trace:i", config, sitename);
             var iisPath = Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, @"..\..\..\..\tools\IIS Express\iisexpress.exe"));  
             var iis = Process.Start(iisPath, args);
 
