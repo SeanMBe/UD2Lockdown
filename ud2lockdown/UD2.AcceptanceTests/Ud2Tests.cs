@@ -123,18 +123,28 @@ namespace UD2.AcceptanceTests
 
         private Action StartCmsWebService()
         {
-            var closeIIS = StartIIS("CMS");
+            var apphost = Path.Combine(Directory.GetCurrentDirectory(), "applicationhost.config");
+            this.SetupVirtualDirectoryPath("CMS", apphost);
+            var closeIIS = StartIIS("CMS", apphost);
             return closeIIS;
         }
-        
-        private static Action StartIIS(string sitename)
-        {
-            var config = Path.Combine(Directory.GetCurrentDirectory(), "applicationhost.config");
-            var args = string.Format(@"/config:{0} /site:{1} /trace:i", config, sitename);
-            var iisPath = Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, @"..\..\..\..\tools\IIS Express\iisexpress.exe"));  
-            var iis = Process.Start(iisPath, args);
 
-            return iis.Kill;
+        private void SetupVirtualDirectoryPath(string app, string apphost)
+        {
+            var website = Path.Combine(Directory.GetCurrentDirectory(), @"C:\Projects\UD2Lockdown\ud2lockdown\CMS\bin\debug");
+            var args = string.Format(@"set vdir ""{0}/"" -physicalPath:""{1}"" /apphostconfig:{2}", app, website, apphost);
+            var appcmd = Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, @"..\..\..\..\tools\IIS Express\appcmd.exe"));  
+            var process = Process.Start(appcmd, args);
+            process.WaitForExit();
+        }
+
+        private static Action StartIIS(string sitename, string apphost)
+        {
+            var args = string.Format(@"/config:{0} /site:{1} /trace:i", apphost, sitename);
+            var iis = Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, @"..\..\..\..\tools\IIS Express\iisexpress.exe"));  
+            var process = Process.Start(iis, args);
+
+            return process.Kill;
         }
     }
 }
