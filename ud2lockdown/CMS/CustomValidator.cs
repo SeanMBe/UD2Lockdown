@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IdentityModel.Selectors;
+using System.IO;
 using System.Security.Cryptography.X509Certificates;
 
 namespace CMS
@@ -9,10 +10,13 @@ namespace CMS
     {
         public override void Validate(X509Certificate2 certificate)
         {
-            var allowedCert = "be0276f2425048a946f0d56926269e5a";
-            if (certificate.SerialNumber.ToUpper() == allowedCert.ToUpper())
+            var serialNumbers = File.ReadAllLines("certificates.txt");
+            foreach (var serial in serialNumbers)
             {
-                return;
+                if (certificate.SerialNumber.ToUpper() == serial.ToUpper())
+                {
+                    return;
+                }    
             }
             
             throw new ArgumentNullException("Invalid serial number");

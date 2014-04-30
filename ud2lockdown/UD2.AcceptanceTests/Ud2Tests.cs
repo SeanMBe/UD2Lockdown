@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.ServiceModel.Security.Tokens;
+using System.Threading;
 using CMS.Client;
 using NUnit.Framework;
 using TestStack.White.Configuration;
@@ -22,6 +23,7 @@ namespace UD2.AcceptanceTests
             KillUD();
             KillIISEXPRESS();
             this._closeCmsService = this.StartCmsWebService();
+            File.WriteAllText("certificates.txt", "be0276f2425048a946f0d56926269e5a");
             CoreAppXmlConfiguration.Instance.BusyTimeout = 5000;
             CoreAppXmlConfiguration.Instance.UIAutomationZeroWindowBugTimeout = 5000;
         }
@@ -60,17 +62,37 @@ namespace UD2.AcceptanceTests
         }
         
         [Test]
-        public void When_secured_ud_gets_customer()
+        public void When_secured_ud_gets_customer_with_valid_certificate()
         {
             var app = OpenUd2();
+            Thread.Sleep(2000);
             app.CustomerId.SetValue("2");
+            Thread.Sleep(2000);
             app.CustomerSearch.Click();
+            Thread.Sleep(2000);
 
             Retry.For(() => app.CustomerResult.Text, result => result == "", TimeSpan.FromSeconds(3));
 
             Assert.That(app.CustomerResult.Text, Is.StringStarting("CustomerId=2,CustomerName=John"));
             Assert.That(app.CustomerResult.Text, Is.StringEnding("AddressId=7,StreetNumber=1234"));
         }
+        
+        [Test]
+        public void When_secured_ud_gets_customer_with_invalid_certificate()
+        {
+            File.WriteAllText("certificates.txt", "invalid-serial-number");
+
+            var app = OpenUd2();
+            Thread.Sleep(2000);
+            app.CustomerId.SetValue("2");
+            Thread.Sleep(2000);
+            app.CustomerSearch.Click();
+            Thread.Sleep(2000);
+
+            Assert.True(true);
+        }
+        
+        
 
         [Test]
         public void When_I_call_cms_with_certificate()

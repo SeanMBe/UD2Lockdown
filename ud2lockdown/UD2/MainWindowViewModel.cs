@@ -1,6 +1,8 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography.X509Certificates;
+using System.Windows;
 using System.Windows.Input;
 using CMS.Client;
 using UD2.Annotations;
@@ -19,7 +21,16 @@ namespace UD2
             {
                 var customerId = CustomerId;
                 var customerResult = "";
-                customerResult = CmsClient.GetCustomer(customerId, Certificates.Cms);
+
+                try
+                {
+                    customerResult = CmsClient.GetCustomer(customerId, Certificates.Cms);
+                }
+                catch (Exception)
+                {
+                    MessageBox.Show("Certificate is invalid");
+                }
+                
                 CustomerGetResult = customerResult;
             });
         }
